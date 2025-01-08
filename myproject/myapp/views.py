@@ -6,8 +6,6 @@ from django.http import JsonResponse
 def home(request):
     return render(request, 'home.html')
 
-
-
 def task(request):
     return render(request, 'task.html')
 
@@ -50,7 +48,6 @@ from django.core.exceptions import ValidationError
 class AccountDestinationsView(APIView):
     def get(self, request, account_id):
         try:
-            # Validate UUID format
             account = Account.objects.get(account_id=account_id)
             destinations = account.destinations.all()
             serializer = DestinationSerializer(destinations, many=True)

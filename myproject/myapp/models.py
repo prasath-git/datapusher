@@ -1,20 +1,16 @@
 from django.db import models
 
-# Create your models here.
 class Vegetable(models.Model):
     name = models.CharField(max_length=100)
-    price = models.DecimalField(max_digits=6, decimal_places=2)  # Price per unit
-    unit = models.CharField(max_length=50)  # kg, piece, bunch, etc.
+    price = models.DecimalField(max_digits=6, decimal_places=2)
+    unit = models.CharField(max_length=50)
 
     def __str__(self):
         return self.name
     
 
-
-
 # from django.db import models
 import uuid
-
 class Account(models.Model):
     email = models.EmailField(unique=True)
     account_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
