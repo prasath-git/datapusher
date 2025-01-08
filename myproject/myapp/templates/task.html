@@ -1,0 +1,107 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task</title>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const App = () => {
+            const [email, setEmail] = React.useState('');
+            const [password, setPassword] = React.useState('');
+            const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+            const [vegetables, setVegetables] = React.useState([]);
+            const [selectedPrice, setSelectedPrice] = React.useState(null);
+
+            const handleLogin = () => {
+                if (!email || !password) {
+                    alert('All fields are required!');
+                    return;
+                }
+                if (!/\S+@\S+\.\S+/.test(email)) {
+                    alert('Invalid email format!');
+                    return;
+                }
+                setIsLoggedIn(true);
+            };
+
+            const fetchVegetables = async () => {
+                try {
+                    const response = await fetch('/myapp/api/vegetables/');
+                    const data = await response.json();
+                    setVegetables(data);
+                } catch (error) {
+                    console.error('Error fetching vegetables:', error);
+                }
+            };
+
+            React.useEffect(() => {
+                if (isLoggedIn) {
+                    fetchVegetables();
+                }
+            }, [isLoggedIn]);
+
+            if (!isLoggedIn) {
+                return (
+                    <div>
+                        <h2>Login</h2>
+                        <input 
+                            type="email" 
+                            placeholder="Email" 
+                            value={email} 
+                            onChange={(e) => setEmail(e.target.value)} 
+                        />
+                        <input 
+                            type="password" 
+                            placeholder="Password" 
+                            value={password} 
+                            onChange={(e) => setPassword(e.target.value)} 
+                        />
+                        <button onClick={handleLogin}>Login</button>
+                    </div>
+                );
+            }
+
+            return (
+                <div>
+                    <h2>Vegetable Table</h2>
+                    <table border="1">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Price</th>
+                                <th>Unit</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {vegetables.map((veg) => (
+                                <tr key={veg.id}>
+                                    <td>{veg.name}</td>
+                                    <td>{veg.price}</td>
+                                    <td>{veg.unit}</td>
+                                    <td>
+                                        <button onClick={() => setSelectedPrice(veg.price)}>
+                                            View
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                    {selectedPrice !== null && <p>Price: {selectedPrice}</p>}
+                </div>
+            );
+        };
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
